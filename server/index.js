@@ -8,6 +8,9 @@ import helmet from "helmet";
 import morgan from "morgan";
 import {fileURLToPath} from 'url';
 import path from "path";
+import {register} from "./controllers/auth.js"
+import authRoutes from "./routes/auth.js";
+import { verifyToken } from "./middleware/auth.js";
 
 /*CONFIGURATION*/
 //const {Path} = mongoose;
@@ -43,6 +46,18 @@ const storage = multer.diskStorage //This line creates a new instance of multer.
     }
 })
 const upload = multer({ storage });
+
+/* Routes with files */
+/**This is an API endpoint defined using express.js
+ * POST route to auth/register url having function register to handle the request
+ * upload.single is a middleware by the multer library handle the process for upload of picture 
+*/
+app.post("/auth/register",upload.single("picture"), verifyToken ,register);
+
+/* Creating Routes */
+
+app.use("/auth", authRoutes);
+
 
 /* MONGOOSE SETUP */
 const PORT=process.env.PORT || 3001; // PORT = 5000 you can directly write it no problem variable or const save in .env(environmental file) are access using process.env.varname
