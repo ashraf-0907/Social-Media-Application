@@ -11,7 +11,12 @@ import path from "path";
 import { register } from "./controllers/auth.js"
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
+import postRoutes from "./routes/posts.js";
+import {createPost} from "./controllers/posts.js";
 import { verifyToken } from "./middleware/auth.js";
+import {users, posts} from "./data/index.js";
+import User from "./models/User.js";
+import Post from "./models/Post.js";
 
 /*CONFIGURATION*/
 //const {Path} = mongoose;
@@ -56,10 +61,13 @@ const upload = multer({ storage });
  */
 app.post("/auth/register", upload.single("picture"), verifyToken, register);
 
+app.post("/post" , verifyToken, upload.single("picture"), createPost);
+
 /* Creating Routes */
 
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
+app.use("/post", postRoutes);
 
 
 /* MONGOOSE SETUP */
@@ -70,4 +78,6 @@ mongoose.connect(process.env.DB_CONNECT, {
     useUnifiedTopology: true,
 }).then(() => {
     app.listen(PORT, () => console.log(`Connected to port ${PORT}`));
+    // User.insertMany(users);
+    // Post.insertMany(posts);
 }).catch((error) => console.log(`${error} did not connect`));
